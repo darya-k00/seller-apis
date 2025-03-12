@@ -12,7 +12,18 @@ logger = logging.getLogger(__file__)
 
 
 def get_product_list(last_id, client_id, seller_token):
-    """Получить список товаров магазина озон"""
+    """Получить список товаров магазина озон
+    Получение списка товаров от Ozon.
+    Возваращает список товаров
+    Args:
+        last_id (str): Идентификатор последнего товара для начала выборки.
+        client_id (str): Идентификатор клиента для аутентификации API.
+        seller_token (str): Токен продавца для доступа к API.
+
+    Returns:
+        list: Список товаров магазина. Каждый товар представлен в виде словаря.
+    """
+    
     url = "https://api-seller.ozon.ru/v2/product/list"
     headers = {
         "Client-Id": client_id,
@@ -32,7 +43,17 @@ def get_product_list(last_id, client_id, seller_token):
 
 
 def get_offer_ids(client_id, seller_token):
-    """Получить артикулы товаров магазина озон"""
+    """Получить артикулы товаров магазина озон
+    Извлечение всех артикулов на товары. Функция отправляет запросы к API для получения списков товаров и собирает артикулы в один список.
+    Args:
+        client_id (str): Идентификатор клиента для аутентификации API.
+        seller_token (str): Токен продавца для доступа к API.
+
+    Returns:
+        list: Список артикулов товаров магазина. Каждый артикул представлен
+              в виде строки.
+    """
+    
     last_id = ""
     product_list = []
     while True:
@@ -49,7 +70,19 @@ def get_offer_ids(client_id, seller_token):
 
 
 def update_price(prices: list, client_id, seller_token):
-    """Обновить цены товаров"""
+    """Обновить цены товаров
+    Функция отправляет обновленные цены товаров в магазин на Озон, используя указанные идентификатор клиента и токен продавца. 
+    Она формирует запрос к API Озон для импорта новых цен и возвращает ответ от сервера.
+
+    Args:
+        prices (list): Список словарей с новыми ценами для товаров. Каждый  словарь должен содержать ключи 'offer_id' и 'price'.
+        client_id (str): Идентификатор клиента для аутентификации API.
+        seller_token (str): Токен продавца для доступа к API.
+
+    Returns:
+        dict: Ответ от API в формате JSON, содержащий информацию об успешном обновлении цен или ошибках.
+    """
+    
     url = "https://api-seller.ozon.ru/v1/product/import/prices"
     headers = {
         "Client-Id": client_id,
@@ -62,7 +95,18 @@ def update_price(prices: list, client_id, seller_token):
 
 
 def update_stocks(stocks: list, client_id, seller_token):
-    """Обновить остатки"""
+    """Обновить остатки
+    Отправляет обновленные остатки товаров в магазин на озон.
+    Формирует запрос к API для импорта новых остатков и возвращает ответ ото сервера.
+     Args:
+        stocks (list): Список словарей с новыми остатками для товаров. Каждый словарь должен содержать ключи 'offer_id' и 'stock'.
+        client_id (str): Идентификатор клиента для аутентификации API.
+        seller_token (str): Токен продавца для доступа к API.
+
+    Returns:
+        dict: Ответ от API в формате JSON, содержащий информацию об успешном обновлении остатков или ошибках.
+    """
+    
     url = "https://api-seller.ozon.ru/v1/product/import/stocks"
     headers = {
         "Client-Id": client_id,
@@ -75,7 +119,11 @@ def update_stocks(stocks: list, client_id, seller_token):
 
 
 def download_stock():
-    """Скачать файл ostatki с сайта casio"""
+    """Скачать файл ostatki с сайта casio
+    Скачивает файл с остатками часов. Возвращает данные о часах 
+        Returns:
+        list: Список словарей, содержащих информацию о остатках часов.
+    """
     # Скачать остатки с сайта
     casio_url = "https://timeworld.ru/upload/files/ostatki.zip"
     session = requests.Session()
@@ -146,7 +194,15 @@ def price_conversion(price: str) -> str:
 
 
 def divide(lst: list, n: int):
-    """Разделить список lst на части по n элементов"""
+    """Разделить список lst на части по n элементов
+    Делит список на подсписок. 
+    Args:
+        lst (list): Список, который необходимо разделить.
+        n (int): Количество элементов в каждом подсписке.
+        
+    Returns: 
+        list: Подсписки, содержащие до n элементов из исходного списка.
+    """
     for i in range(0, len(lst), n):
         yield lst[i : i + n]
 
