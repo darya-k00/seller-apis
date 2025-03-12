@@ -11,6 +11,17 @@ logger = logging.getLogger(__file__)
 
 
 def get_product_list(page, campaign_id, access_token):
+    """ Получает список товаров на Яндекс.Маркете
+    
+    Args:
+        page (str): Используется для конкретных страниц результатов.
+        campaign_id (str): Идентификатор кампании, из которой нужно получить товары.
+        access_token (str): Токен доступа.
+
+    Returns:
+        list: Список записей товарных предложений, полученнных от Яндекс.Маркета
+    """
+    
     endpoint_url = "https://api.partner.market.yandex.ru/"
     headers = {
         "Content-Type": "application/json",
@@ -30,6 +41,16 @@ def get_product_list(page, campaign_id, access_token):
 
 
 def update_stocks(stocks, campaign_id, access_token):
+    """ Обновление запасов товаров на Яндекс.Маркете. 
+    Args:
+        stocks (list): Список товаров, для которых необходимо обновить запасы.
+        campaign_id (str): Идентификатор кампании, в которой обновляются запасы.
+        access_token (str): Токен доступа для авторизации.
+
+    Returns:
+        dict: Ответ от API Яндекс.Маркета, содержащий информацию об обновленных запасах
+    """
+    
     endpoint_url = "https://api.partner.market.yandex.ru/"
     headers = {
         "Content-Type": "application/json",
@@ -46,6 +67,17 @@ def update_stocks(stocks, campaign_id, access_token):
 
 
 def update_price(prices, campaign_id, access_token):
+    """ Обновление цены товаров на Яндекс.Маркете.
+    Отправляются обновления цен для указанных товаров. Передаются в виде списка предложений
+    Args:
+         prices (list): Список объектов, содержащих информацию о ценах товаров.
+        campaign_id (str): Идентификатор кампании, в которой обновляются цены.
+        access_token (str): Токен доступа для авторизации.
+        
+    Returns:
+        dict: Ответ от API Яндекс.Маркета, содержащий информацию об обновленных ценах.
+    """
+    
     endpoint_url = "https://api.partner.market.yandex.ru/"
     headers = {
         "Content-Type": "application/json",
@@ -62,7 +94,14 @@ def update_price(prices, campaign_id, access_token):
 
 
 def get_offer_ids(campaign_id, market_token):
-    """Получить артикулы товаров Яндекс маркета"""
+    """Получить артикулы товаров Яндекс маркета
+    Извлекает список артикулов всех товаров и собирает все артикулы в один список.
+    Args:
+        campaign_id (str): Идентификатор кампании, для которой необходимо получить товары.
+        market_token (str): Токен доступа для авторизации.
+    Returns:
+        list: Список артикулов  товаров.
+    """
     page = ""
     product_list = []
     while True:
@@ -78,6 +117,16 @@ def get_offer_ids(campaign_id, market_token):
 
 
 def create_stocks(watch_remnants, offer_ids, warehouse_id):
+    """ Создает список остатков товаров для определнного склада.
+    Обрабатываются остатки товаров, проверяется наличие артикулов в списке приедложений и формируется структура данных.
+    Args:
+        watch_remnants (list): Список словарей с информацией о остатках товаров. Каждый словарь должен содержать ключи "Код" и "Количество".
+        offer_ids (list): Список идентификаторов предложений, которые нужно проверить на наличие в остатках.
+        warehouse_id (str): Идентификатор склада, для которого создаются остатки.
+
+    Returns:
+        list: Список словарей, каждый из которых представляет собой остаток товара с ключами "sku", "warehouseId" и "items".
+    """
     # Уберем то, что не загружено в market
     stocks = list()
     date = str(datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z")
@@ -123,6 +172,18 @@ def create_stocks(watch_remnants, offer_ids, warehouse_id):
 
 
 def create_prices(watch_remnants, offer_ids):
+    """ Создается список цен для товаров.
+    Обрабатываются остатки товаров и формируется структура с ценами.
+
+    Args:
+        watch_remnants (list): Список словарей с информацией о остатках товаров. Каждый словарь должен содержать ключи "Код" и "Цена".
+        offer_ids (list): Список идентификаторов предложений, для которых необходимо получить цены.
+
+    Returns:
+        list: Список словарей, каждый из которых представляет собой цену товара с ключами "id" и "price".
+    
+    """
+    
     prices = []
     for watch in watch_remnants:
         if str(watch.get("Код")) in offer_ids:
