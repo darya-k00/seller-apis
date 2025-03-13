@@ -80,7 +80,7 @@ def update_price(prices: list, client_id, seller_token):
         seller_token (str): Токен продавца для доступа к API.
 
     Returns:
-        dict: Ответ от API в формате JSON, содержащий информацию об успешном обновлении цен или ошибках.
+        dict: Ответ от API в виде словаря, содержащий информацию об успешном обновлении цен или ошибках.
     """
     
     url = "https://api-seller.ozon.ru/v1/product/import/prices"
@@ -104,7 +104,7 @@ def update_stocks(stocks: list, client_id, seller_token):
         seller_token (str): Токен продавца для доступа к API.
 
     Returns:
-        dict: Ответ от API в формате JSON, содержащий информацию об успешном обновлении остатков или ошибках.
+        dict: Ответ от API в виде словаря, содержащий информацию об успешном обновлении остатков или ошибках.
     """
     
     url = "https://api-seller.ozon.ru/v1/product/import/stocks"
