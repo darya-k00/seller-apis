@@ -94,7 +94,7 @@ def update_price(prices, campaign_id, access_token):
 
 
 def get_offer_ids(campaign_id, market_token):
-    """Получить артикулы товаров Яндекс маркета
+    """ Получить артикулы товаров Яндекс маркета
     Извлекает список артикулов всех товаров и собирает все артикулы в один список.
     Args:
         campaign_id (str): Идентификатор кампании, для которой необходимо получить товары.
@@ -204,6 +204,18 @@ def create_prices(watch_remnants, offer_ids):
 
 
 async def upload_prices(watch_remnants, campaign_id, market_token):
+    """ Обновляет цены на товары.
+    Создается список цен на основе остатка товаров и обновляет цены по 500.
+    
+    Args:
+        watch_remnants (list): Список остатков товаров.
+        campaign_id (str): Идентификатор кампании, для которой обновляются цены.
+        market_token (str): Токен доступа к маркетплейсу для аутентификации запросов.
+
+    Returns:
+        list: Список обновленных цен для товаров.
+
+    """
     offer_ids = get_offer_ids(campaign_id, market_token)
     prices = create_prices(watch_remnants, offer_ids)
     for some_prices in list(divide(prices, 500)):
@@ -212,6 +224,19 @@ async def upload_prices(watch_remnants, campaign_id, market_token):
 
 
 async def upload_stocks(watch_remnants, campaign_id, market_token, warehouse_id):
+    """ Обновляет запасы товаров.
+    Создает список запасов на основе остатков товаров и обновляет запасы по 2000. В результате получаются два списка.
+    
+    Args:
+        watch_remnants (list): Список остатков товаров, содержащий информацию о каждом товаре.
+        campaign_id (str): Идентификатор кампании, для которой обновляются запасы.
+        market_token (str): Токен доступа к маркетплейсу для аутентификации запросов.
+        warehouse_id (str): Идентификатор склада, на котором находятся товары.
+
+    Returns:
+            list: Список непустых запасов товаров.
+            list: Полный список запасов товаров.
+    """
     offer_ids = get_offer_ids(campaign_id, market_token)
     stocks = create_stocks(watch_remnants, offer_ids, warehouse_id)
     for some_stock in list(divide(stocks, 2000)):
