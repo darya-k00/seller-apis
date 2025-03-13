@@ -144,6 +144,18 @@ def download_stock():
 
 
 def create_stocks(watch_remnants, offer_ids):
+    """ Создает список запасов на основе остатков часов.
+    Убирает из списка предложений те, которые не загружены и создает список запасов с учетом количества доступных часов.
+    Если количесиво часов больше 10, то запас 100. Если колчество 1, то запас 0. Для остальных запас 0.
+    
+    Args:
+        watch_remnants (list): Список словарей, содержащих информацию о остатках часов. Каждый словарь должен содержать ключи "Код" и "Количество".
+        offer_ids (list): Список идентификаторов предложений, которые нужно проверить.
+
+    Returns:
+        list: Список словарей с запасами, где каждый словарь содержит ключи  "offer_id" и "stock".
+    """
+    
     # Уберем то, что не загружено в seller
     stocks = []
     for watch in watch_remnants:
@@ -164,6 +176,16 @@ def create_stocks(watch_remnants, offer_ids):
 
 
 def create_prices(watch_remnants, offer_ids):
+    """ Создает список цен на основе остатков часов.
+    Для каждого остатка часов, если код есть в списке, создается словарь с информацией о цене. Включает старую цену, текущую и валюту.
+    
+    Args:
+        watch_remnants (list): Список словарей, содержащих информацию о остатках часов. Каждый словарь должен содержать ключи "Код" и "Цена".
+        offer_ids (list): Список идентификаторов предложений, которые нужно проверить.
+
+    Returns:
+        list: Список словарей с ценами, где каждый словарь содержит ключи "auto_action_enabled", "currency_code", "offer_id", "old_price" и "price".
+    """
     prices = []
     for watch in watch_remnants:
         if str(watch.get("Код")) in offer_ids:
@@ -208,6 +230,16 @@ def divide(lst: list, n: int):
 
 
 async def upload_prices(watch_remnants, client_id, seller_token):
+    """ Загружает цена на часы на в магазин.
+    Создает список цен на основе остатков часов и обновляет цены на платформе, отправляя партиями по 1000.
+    Args:
+        watch_remnants (list): Список словарей, содержащих информацию о остатках часов. Каждый словарь должен содержать ключи, необходимые для создания цен.
+        client_id (str): Идентификатор клиента, используемый для аутентификации.
+        seller_token (str): Токен продавца, используемый для аутентификации.
+
+    Returns:
+        list: Список словарей с ценами, которые были загружены на платформу.
+    """
     offer_ids = get_offer_ids(client_id, seller_token)
     prices = create_prices(watch_remnants, offer_ids)
     for some_price in list(divide(prices, 1000)):
@@ -216,6 +248,18 @@ async def upload_prices(watch_remnants, client_id, seller_token):
 
 
 async def upload_stocks(watch_remnants, client_id, seller_token):
+    """ Обновляет запасы часов в магазине.
+    Создает список запасов на основе остатков и обновляет запасы в магазине, отправляя по 100.
+    
+    Args:
+        watch_remnants (list): Список словарей, содержащих информацию о остатках часов. Каждый словарь должен содержать ключи, необходимые для создания запасов.
+        client_id (str): Идентификатор клиента, используемый для аутентификации.
+        seller_token (str): Токен продавца, используемый для аутентификации.
+
+    Returns:
+        list: Список словарей с запасами, у которых количество больше нуля.
+        list: Список всех созданных запасов.
+    """
     offer_ids = get_offer_ids(client_id, seller_token)
     stocks = create_stocks(watch_remnants, offer_ids)
     for some_stock in list(divide(stocks, 100)):
